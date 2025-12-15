@@ -13,4 +13,4 @@ TODO Requirements:
 - Function must return text (max 1024) characters (limitations in NAV Classic) - maybe this return valiue is not needed, the point is not to wait for the function call, just execute it
 
 
-- Register with regasm command `regasm /codebase NavHttpClientAsync.dll`
+- Register with regasm command `regasm /codebase /tlb NavHttpClientAsync.dll`
