@@ -12,6 +12,7 @@ namespace NavHttpClientAsync
     [Guid("79b05537-33c7-4f24-be8b-581373154e71")]
     [ClassInterface(ClassInterfaceType.None)]
     [ComVisible(true)]
+    [ProgId("NavHttpClientAsync.NavHttpClient")]
     public class NavHttpClient : INavHttpClient
     {
         public string HelloWorld()
