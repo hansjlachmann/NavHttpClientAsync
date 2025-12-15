@@ -2,14 +2,14 @@
 
 namespace NavHttpClientAsync
 {
-    [Guid("4c301f44-63e0-11ee-8c99-0242ac120002")]
+    [Guid("2fb45a77-9e85-431d-9ac9-d030107deebd")]
     [ComVisible(true)]
     public interface INavHttpClient
     {
        string HelloWorld();
     }
 
-    [Guid("3543cf38-63e0-11ee-8c99-0242ac120002")]
+    [Guid("79b05537-33c7-4f24-be8b-581373154e71")]
     [ClassInterface(ClassInterfaceType.None)]
     [ComVisible(true)]
     public class NavHttpClient : INavHttpClient
