@@ -14,3 +14,13 @@ TODO Requirements:
 
 
 - Register with regasm command `regasm /codebase /tlb NavHttpClientAsync.dll`
+
+### How to call the COM/dll function inside NAV Classic
+```pascal
+// add variable NavHttpClient Automation 'NavHttpClientAsync'.NavHttpClient
+TestBody := 'somejson';
+CREATE(NavHttpClient);
+NavHttpClient.SendHttpRequest('http://myserver.com/api/someApifunction', 'POST',
+             'Content-Type:application/json', TestBody);
+CLEAR(NavHttpClient);
+```
