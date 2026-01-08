@@ -20,7 +20,18 @@ namespace NavHttpClientAsync
     [ProgId("NavHttpClientAsync.NavHttpClient")]
     public class NavHttpClient : INavHttpClient
     {
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly HttpClient httpClient;
+
+        static NavHttpClient()
+        {
+            // Enable TLS 1.2 and TLS 1.3 for older Windows servers
+            System.Net.ServicePointManager.SecurityProtocol =
+                System.Net.SecurityProtocolType.Tls12 |
+                System.Net.SecurityProtocolType.Tls11 |
+                System.Net.SecurityProtocolType.Tls;
+
+            httpClient = new HttpClient();
+        }
 
         public string HelloWorld()
         {
