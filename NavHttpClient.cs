@@ -38,10 +38,31 @@ namespace NavHttpClientAsync
                 }
                 catch (Exception ex)
                 {
-                    // Log error to file if path provided
+                    // Log detailed error to file if path provided
                     if (!string.IsNullOrEmpty(filePath))
                     {
-                        LogToFile(filePath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ERROR: {ex.Message}\r\n");
+                        var errorLog = new StringBuilder();
+                        errorLog.AppendLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ERROR");
+                        errorLog.AppendLine($"URL: {url}");
+                        errorLog.AppendLine($"Method: {method}");
+                        errorLog.AppendLine($"Error Type: {ex.GetType().Name}");
+                        errorLog.AppendLine($"Error Message: {ex.Message}");
+
+                        // Log inner exceptions
+                        var innerEx = ex.InnerException;
+                        int level = 1;
+                        while (innerEx != null)
+                        {
+                            errorLog.AppendLine($"Inner Exception {level}: {innerEx.GetType().Name}");
+                            errorLog.AppendLine($"Inner Message {level}: {innerEx.Message}");
+                            innerEx = innerEx.InnerException;
+                            level++;
+                        }
+
+                        errorLog.AppendLine($"Stack Trace: {ex.StackTrace}");
+                        errorLog.AppendLine(new string('-', 80));
+
+                        LogToFile(filePath, errorLog.ToString());
                     }
                     System.Diagnostics.Debug.WriteLine($"HTTP Request Error: {ex.Message}");
                 }
