@@ -11,7 +11,7 @@ namespace NavHttpClientAsync
     public interface INavHttpClient
     {
         string HelloWorld();
-        void SendHttpRequest(string url, string method, string headers, string body);
+        void SendHttpRequest(string url, string method, string headers, string body, string filePath);
     }
 
     [Guid("79b05537-33c7-4f24-be8b-581373154e71")]
@@ -27,24 +27,28 @@ namespace NavHttpClientAsync
             return "Hello World!";
         }
 
-        public void SendHttpRequest(string url, string method, string headers, string body)
+        public void SendHttpRequest(string url, string method, string headers, string body, string filePath)
         {
             // Fire and forget - returns immediately without blocking NAV
             Task.Run(async () =>
             {
                 try
                 {
-                    await ExecuteHttpRequestAsync(url, method, headers, body);
+                    await ExecuteHttpRequestAsync(url, method, headers, body, filePath);
                 }
                 catch (Exception ex)
                 {
-                    // Log error silently (could write to Windows Event Log or file)
+                    // Log error to file if path provided
+                    if (!string.IsNullOrEmpty(filePath))
+                    {
+                        LogToFile(filePath, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ERROR: {ex.Message}\r\n");
+                    }
                     System.Diagnostics.Debug.WriteLine($"HTTP Request Error: {ex.Message}");
                 }
             });
         }
 
-        private async Task ExecuteHttpRequestAsync(string url, string method, string headers, string body)
+        private async Task ExecuteHttpRequestAsync(string url, string method, string headers, string body, string filePath)
         {
             using (var request = new HttpRequestMessage())
             {
@@ -89,10 +93,36 @@ namespace NavHttpClientAsync
                 // Send the request
                 var response = await httpClient.SendAsync(request);
 
-                // Optionally read response (for logging/debugging)
+                // Read response
                 var responseContent = await response.Content.ReadAsStringAsync();
                 System.Diagnostics.Debug.WriteLine($"Response Status: {response.StatusCode}");
                 System.Diagnostics.Debug.WriteLine($"Response Body: {responseContent}");
+
+                // Log to file if path provided
+                if (!string.IsNullOrEmpty(filePath))
+                {
+                    var logEntry = new StringBuilder();
+                    logEntry.AppendLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}]");
+                    logEntry.AppendLine($"URL: {url}");
+                    logEntry.AppendLine($"Method: {method}");
+                    logEntry.AppendLine($"Status: {(int)response.StatusCode} {response.StatusCode}");
+                    logEntry.AppendLine($"Response: {responseContent}");
+                    logEntry.AppendLine(new string('-', 80));
+
+                    LogToFile(filePath, logEntry.ToString());
+                }
+            }
+        }
+
+        private void LogToFile(string filePath, string content)
+        {
+            try
+            {
+                System.IO.File.AppendAllText(filePath, content);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Failed to write to log file: {ex.Message}");
             }
         }
     }
